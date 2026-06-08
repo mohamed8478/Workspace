@@ -34,8 +34,17 @@ jobs:
         with:
           languages: ${{ matrix.language }}
 
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+      - name: Set up Java
+        if: matrix.language == 'java-kotlin'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+
+      - name: Build Java project
+        if: matrix.language == 'java-kotlin'
+        run: mvn -B -f Backend/pom.xml clean package -DskipTests
 
       - name: Analyze
         uses: github/codeql-action/analyze@v3
@@ -71,6 +80,8 @@ jobs:
       - name: Run ZAP baseline scan
         run: |
           docker run --rm --network host \
+            --user root \
+            -w /zap/wrk \
             -v "$PWD:/zap/wrk:rw" \
             ghcr.io/zaproxy/zaproxy:stable \
             zap-baseline.py \
@@ -78,6 +89,7 @@ jobs:
             -r zap-baseline-report.html \
             -J zap-baseline-report.json \
             || true
+          ls -la zap-baseline-report.* || true
 
       - name: Upload ZAP report
         uses: actions/upload-artifact@v4
