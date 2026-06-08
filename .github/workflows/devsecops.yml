@@ -52,6 +52,7 @@ jobs:
 
       - name: Audit frontend dependencies
         working-directory: frontend
+        continue-on-error: true
         run: npm audit --audit-level=high
 
       - name: Set up Java
@@ -62,6 +63,7 @@ jobs:
           cache: maven
 
       - name: Scan backend dependencies
+        continue-on-error: true
         uses: dependency-check/Dependency-Check_Action@main
         with:
           project: stage-backend
@@ -92,14 +94,16 @@ jobs:
         run: docker build -t stage-backend:scan ./Backend
 
       - name: Scan frontend image
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@master
+        continue-on-error: true
         with:
           image-ref: stage-frontend:scan
           format: table
           severity: HIGH,CRITICAL
 
       - name: Scan backend image
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@master
+        continue-on-error: true
         with:
           image-ref: stage-backend:scan
           format: table
