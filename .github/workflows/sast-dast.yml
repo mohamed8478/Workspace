@@ -1,0 +1,93 @@
+name: SAST and DAST
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+jobs:
+  sast:
+    name: CodeQL SAST
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language:
+          - javascript-typescript
+          - java-kotlin
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Analyze
+        uses: github/codeql-action/analyze@v3
+
+  dast:
+    name: OWASP ZAP DAST
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start application
+        env:
+          APP_JWT_SECRET: dmpYTW1KcFd6V2E3KzROSFR2K0dZdWxoTGFxTEdxRTR0NkU0K3RsSWRLZ3c=
+          SPRING_AI_OPENAI_API_KEY: ""
+          APP_LIVEKIT_API_SECRET: ""
+          APP_DEEPGRAM_APIKEY: ""
+        run: docker compose up -d --build
+
+      - name: Wait for frontend
+        run: |
+          for i in {1..30}; do
+            if curl -fsS http://localhost:4200/health; then
+              exit 0
+            fi
+            sleep 5
+          done
+          docker compose logs
+          exit 1
+
+      - name: Run ZAP baseline scan
+        run: |
+          docker run --rm --network host \
+            -v "$PWD:/zap/wrk:rw" \
+            ghcr.io/zaproxy/zaproxy:stable \
+            zap-baseline.py \
+            -t http://localhost:4200 \
+            -r zap-baseline-report.html \
+            -J zap-baseline-report.json \
+            || true
+
+      - name: Upload ZAP report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: zap-baseline-report
+          path: |
+            zap-baseline-report.html
+            zap-baseline-report.json
+
+      - name: Stop application
+        if: always()
+        run: docker compose down -v

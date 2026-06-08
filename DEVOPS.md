@@ -45,6 +45,15 @@ The DevSecOps workflow runs:
 - OWASP Dependency Check for backend dependencies
 - Trivy scans for Docker images
 
+## SAST and DAST
+
+The `SAST and DAST` workflow adds:
+
+- CodeQL SAST for Java/Spring Boot and Angular/TypeScript code
+- OWASP ZAP baseline DAST against the running frontend URL
+
+DAST starts the app with Docker Compose inside GitHub Actions, waits for the frontend health endpoint, scans `http://localhost:4200`, and uploads HTML/JSON reports as workflow artifacts.
+
 The security workflow is currently non-blocking with `continue-on-error: true`. This is intentional for the first version because the project already contains hardcoded keys that should be reported first, then fixed safely.
 
 ## Security Notes
