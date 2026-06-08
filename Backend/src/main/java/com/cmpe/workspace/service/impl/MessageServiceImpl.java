@@ -17,6 +17,7 @@ import com.cmpe.workspace.ws.dto.request.MessageRequest;
 import com.cmpe.workspace.ws.dto.responce.MessageResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,6 +40,8 @@ public class MessageServiceImpl implements MessageService {
     private final ChatService chatService;
     private final FileService fileService;
 
+    @Value("${app.file.uploads.media-output-path}")
+    private String mediaUploadPath;
 
     @Override
     public List<MessageResponse> findMessages(Long chatId, Long userId) {
@@ -147,7 +150,7 @@ public class MessageServiceImpl implements MessageService {
                 .type(message.getType())
                 .status(message.getStatus())
                 .createdAt(message.getCreatedAt())
-                .media(FileUtils.readFileFromLocation(message.getMediaFilePath()))
+                .media(FileUtils.readFileFromLocation(message.getMediaFilePath(), mediaUploadPath))
                 .build();
     }
 
