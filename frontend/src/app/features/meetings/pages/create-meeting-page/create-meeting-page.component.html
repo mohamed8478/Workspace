@@ -1,0 +1,288 @@
+<div class="content-container">
+  <div class="page-intro-row">
+    <div>
+      <h1 class="page-title">Create a Meeting</h1>
+      <p class="page-subtitle">
+        Set up a new session and invite your team members.
+      </p>
+    </div>
+    <div class="top-actions">
+      <button
+        routerLink="/dashboard/meeting"
+        type="button"
+        class="btn btn-outline"
+      >
+        Cancel
+      </button>
+      <button type="button" class="btn btn-purple">
+        <svg
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+          ></path>
+        </svg>
+        Create Meeting
+      </button>
+    </div>
+  </div>
+
+  <div class="split-layout">
+    <div class="left-column-cards">
+      <div class="content-card">
+        <h2 class="section-indicator-heading">Meeting Details</h2>
+
+        <div class="form-group">
+          <label class="form-label">Meeting Title</label>
+          <input
+            class="form-input"
+            type="text"
+            placeholder="e.g. Q4 Architectural Review"
+            [formControl]="meetingForm.controls.title"
+          />
+        </div>
+
+        <div class="form-grid-row" [formGroup]="meetingForm">
+          <div class="form-group no-margin">
+            <label class="form-label" for="meetingDate">
+              <svg
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              Date
+            </label>
+            <input
+              id="meetingDate"
+              class="form-input"
+              type="date"
+              formControlName="date"
+            />
+          </div>
+
+          <div class="form-group no-margin">
+            <label class="form-label" for="startTime">
+              <svg
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              Start Time
+            </label>
+            <input
+              id="startTime"
+              class="form-input"
+              type="time"
+              formControlName="startTime"
+            />
+          </div>
+        </div>
+
+        <div class="form-group no-margin">
+          <label class="form-label">
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              ></path>
+            </svg>
+            Agenda & Description
+          </label>
+          <textarea
+            class="form-textarea"
+            placeholder="Define the goals of this meeting..."
+            [formControl]="meetingForm.controls.description"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="content-card">
+        <h2 class="section-indicator-heading">Meeting Configuration</h2>
+        <div class="config-options-flex">
+          <div class="config-widget active">
+            <div class="config-icon-box">
+              <svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                ></path>
+              </svg>
+            </div>
+            <div class="config-info-text">
+              <span class="config-widget-title">Video Conference</span>
+              <span class="config-widget-desc"
+                >Auto-generate a meeting link</span
+              >
+            </div>
+          </div>
+          <div class="config-widget">
+            <div class="config-icon-box">
+              <svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                ></path>
+              </svg>
+            </div>
+            <div class="config-info-text">
+              <span class="config-widget-title">AI Assistant</span>
+              <span class="config-widget-desc"
+                >Auto-transcribe and summarize</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-column-panels">
+      <div class="content-card">
+        <h2 class="section-indicator-heading">Participants</h2>
+
+        <div class="search-row-box">
+          <div class="search-field-container" tabindex="0">
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+            <input
+              #searchInput
+              type="text"
+              class="search-field-input"
+              placeholder="Search team..."
+              (input)="onSearchChange($event)"
+              [formControl]="searchControl"
+            />
+          </div>
+        </div>
+        @if(participants().length >= 1){
+        <div class="participants-preview" id="preview">
+          @for(participant of participants(); track participant.id){
+            <div class="mini-user">
+              <div class="mini-avatar">{{ participant.name?.charAt(0) }}</div>
+              <span>{{ participant.name }}</span>
+              <button class="cancel-btn"   (click)="removeParticipant(participant.id)">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20"
+                  width="20"
+                  viewBox="0 0 640 640"
+                >
+                  <!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                  <path
+                    fill="rgb(0, 0, 0)"
+                    d="M320 112C434.9 112 528 205.1 528 320C528 434.9 434.9 528 320 528C205.1 528 112 434.9 112 320C112 205.1 205.1 112 320 112zM320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM231 231C221.6 240.4 221.6 255.6 231 264.9L286 319.9L231 374.9C221.6 384.3 221.6 399.5 231 408.8C240.4 418.1 255.6 418.2 264.9 408.8L319.9 353.8L374.9 408.8C384.3 418.2 399.5 418.2 408.8 408.8C418.1 399.4 418.2 384.2 408.8 374.9L353.8 319.9L408.8 264.9C418.2 255.5 418.2 240.3 408.8 231C399.4 221.7 384.2 221.6 374.9 231L319.9 286L264.9 231C255.5 221.6 240.3 221.6 231 231z"
+                  />
+                </svg>
+              </button>
+            </div>
+          }
+        </div>
+        }
+
+        <div class="participants-stack">
+          @for (user of users(); track user.id) {
+            <div class="participant-row-item">
+              <div class="participant-meta-block">
+                <div
+                  class="participant-avatar-img"
+                  style="background: linear-gradient(135deg, #fda4af, #f43f5e)"
+                >
+                  {{ user.fullName?.charAt(0) }}
+                </div>
+                <div class="participant-text-details">
+                  <span class="participant-name-string">{{
+                    user.fullName
+                  }}</span>
+                  <span class="participant-email-string">{{ user.email }}</span>
+                </div>
+              </div>
+              <div class="list-action-trigger" (click)="addParticipant(user)">+</div>
+            </div>
+          }
+          @if (searchValue() && users().length === 0) {
+            <p>No users found</p>
+          }
+        </div>
+
+        <div class="panel-data-summary-footer">
+          <span>👥 {{ participants().length }} total participants</span>
+        </div>
+        <a href="#" class="link-action-node">Invite via Link</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sticky-footer-action-layer">
+  <button 
+  (click)="onSubmit()"
+  type="button" class="btn btn-purple btn-giant-action">
+    <svg
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+      ></path>
+    </svg>
+    Schedule & Send Invitations
+  </button>
+</div>

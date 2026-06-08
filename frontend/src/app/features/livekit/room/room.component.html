@@ -1,0 +1,139 @@
+<div class="room-shell">
+  <main class="room-main">
+    <section class="room-workspace">
+      <header class="room-header">
+        <div class="room-info">
+          <span class="room-dot"></span>
+          <div>
+            <span class="room-kicker">Live meeting</span>
+            <h1 class="room-name">{{ roomService.roomName() }}</h1>
+          </div>
+        </div>
+
+        <span class="room-participant-count">
+          {{ roomService.participantCount() }}
+          participant{{ roomService.participantCount() !== 1 ? 's' : '' }}
+        </span>
+      </header>
+
+      <section class="room-stage">
+        <div
+          class="room-video-grid"
+          [class.room-video-grid--solo]="roomService.participantCount() === 1"
+        >
+          @if (roomService.localParticipant(); as local) {
+            <app-video-tile [participant]="local" [isLocal]="true" />
+          }
+          @for (participant of roomService.participants(); track participant.sid) {
+            <app-video-tile [participant]="participant" />
+          }
+        </div>
+      </section>
+
+      <footer class="room-controls">
+        <button
+          class="room-control-btn"
+          [class.room-control-btn--off]="!microphoneEnabled"
+          (click)="toggleMicrophone()"
+        >
+          <span>{{ microphoneEnabled ? 'Mic' : 'Muted' }}</span>
+          <label>{{ microphoneEnabled ? 'Mute' : 'Unmute' }}</label>
+        </button>
+
+        <button
+          class="room-control-btn"
+          [class.room-control-btn--off]="!cameraEnabled"
+          (click)="toggleCamera()"
+        >
+          <span>{{ cameraEnabled ? 'Cam' : 'Off' }}</span>
+          <label>{{ cameraEnabled ? 'Camera' : 'No Cam' }}</label>
+        </button>
+
+        <button
+          class="room-control-btn room-control-btn--share"
+          [class.room-control-btn--active]="screenShareEnabled"
+          type="button"
+          (click)="toggleScreenShare()"
+        >
+          <span>{{ screenShareEnabled ? 'Sharing' : 'Share' }}</span>
+          <label>Screen</label>
+        </button>
+
+        <button
+          class="room-control-btn room-control-btn--leave"
+          (click)="leaveRoom()"
+        >
+          <span>Leave</span>
+          <label>Exit room</label>
+        </button>
+      </footer>
+    </section>
+
+    <aside class="ai-chat-panel" aria-label="Meeting AI assistant">
+      <div class="ai-chat-header">
+        <div>
+          <p class="ai-chat-kicker">Ongoing summary</p>
+          <h2>Ask the meeting AI</h2>
+        </div>
+        <span class="ai-chat-orb"></span>
+      </div>
+
+      <div class="ai-suggestions" aria-label="Suggested prompts">
+        @for (suggestion of aiSuggestions; track suggestion) {
+          <button
+            type="button"
+            class="ai-suggestion"
+            (click)="useSuggestion(suggestion)"
+            [disabled]="aiStreaming()"
+          >
+            {{ suggestion }}
+          </button>
+        }
+      </div>
+
+      <div #aiMessages class="ai-messages">
+        @for (message of aiMessagesList(); track message.id) {
+          <article
+            class="ai-message"
+            [class.ai-message--user]="message.role === 'user'"
+            [class.ai-message--assistant]="message.role === 'assistant'"
+          >
+            <span class="ai-avatar">{{ message.role === 'user' ? 'You' : 'AI' }}</span>
+            <p>
+              @if (message.content) {
+                {{ message.content }}
+              } @else {
+                <span class="ai-typing">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </span>
+              }
+            </p>
+          </article>
+        }
+      </div>
+
+      @if (aiError()) {
+        <p class="ai-error">{{ aiError() }}</p>
+      }
+
+      <form class="ai-composer" (submit)="askAi(); $event.preventDefault()">
+        <textarea
+          rows="3"
+          placeholder="Ask about this room..."
+          [value]="aiQuestion()"
+          (input)="updateAiQuestion($any($event.target).value)"
+          [disabled]="aiStreaming()"
+        ></textarea>
+        <button
+          type="submit"
+          class="ai-send-btn"
+          [disabled]="!aiQuestion().trim() || aiStreaming()"
+        >
+          {{ aiStreaming() ? 'Thinking' : 'Send' }}
+        </button>
+      </form>
+    </aside>
+  </main>
+</div>

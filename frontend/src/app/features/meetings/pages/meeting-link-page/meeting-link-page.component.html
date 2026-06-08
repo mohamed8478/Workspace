@@ -1,0 +1,74 @@
+<main class="meeting-link-shell">
+  <section class="meeting-link-card">
+    @if (loading()) {
+      <div class="meeting-state">
+        <span class="loader-ring"></span>
+        <h1>Checking meeting status</h1>
+        <p>Give us a moment while we prepare your meeting link.</p>
+      </div>
+    } @else if (joining()) {
+      <div class="meeting-state">
+        <span class="loader-ring loader-ring--green"></span>
+        <h1>Meeting is live</h1>
+        <p>Opening the room now...</p>
+      </div>
+    } @else if (error()) {
+      <div class="meeting-state">
+        <span class="status-icon status-icon--error">!</span>
+        <h1>Meeting link needs attention</h1>
+        <p>{{ error() }}</p>
+        <div class="meeting-actions">
+          <button type="button" class="btn-primary" (click)="retry()">Try again</button>
+          <a routerLink="/dashboard/meeting" class="btn-secondary">Back to meetings</a>
+        </div>
+      </div>
+    } @else {
+      <div class="meeting-state">
+        <span class="status-pill">{{ statusLabel() }}</span>
+
+        <div class="countdown-strip" aria-label="Time remaining until meeting">
+          <div class="countdown-box">
+            <strong>{{ formatPart(countdown().days) }}</strong>
+            <span>Days</span>
+          </div>
+          <span class="countdown-separator" aria-hidden="true">:</span>
+          <div class="countdown-box">
+            <strong>{{ formatPart(countdown().hours) }}</strong>
+            <span>Hours</span>
+          </div>
+          <span class="countdown-separator" aria-hidden="true">:</span>
+          <div class="countdown-box">
+            <strong>{{ formatPart(countdown().minutes) }}</strong>
+            <span>Minutes</span>
+          </div>
+          <span class="countdown-separator" aria-hidden="true">:</span>
+          <div class="countdown-box">
+            <strong>{{ formatPart(countdown().seconds) }}</strong>
+            <span>Seconds</span>
+          </div>
+        </div>
+
+        <h1>{{ meeting()?.title }}</h1>
+
+        <div class="meeting-chips">
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 3v3M17 3v3M4.5 9h15M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" />
+            </svg>
+            {{ dateLabel() }}
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m9 12 2 2 4-5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            Opens automatically when live
+          </span>
+        </div>
+
+        <p class="meeting-description">
+          Keep this tab open. We will move you into the meeting as soon as it starts.
+        </p>
+      </div>
+    }
+  </section>
+</main>

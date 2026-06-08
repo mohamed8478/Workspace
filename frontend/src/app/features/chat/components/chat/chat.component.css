@@ -1,0 +1,230 @@
+:host {
+  display: contents;
+}
+
+.sidebar {
+    background: var(--bg-surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+
+/* Search bar */
+.sidebar-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 14px 12px 10px;
+    padding: 9px 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition: border-color .2s;
+}
+
+.sidebar-search:focus-within {
+    border-color: var(--accent);
+}
+
+.sidebar-search svg {
+    width: 15px;
+    height: 15px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.sidebar-search input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 12.5px;
+}
+
+.sidebar-search input::placeholder {
+    color: var(--text-muted);
+}
+
+/* Section label */
+.sidebar-section {
+    padding: 12px 14px 6px;
+}
+
+.section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+
+.contacts{
+    margin-top: 36px;
+}
+/* Departments */
+.dept-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.dept-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 10px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background .18s;
+}
+
+.dept-item:hover {
+    background: var(--bg-hover);
+}
+
+.dept-item.active {
+    background: var(--bg-active);
+}
+
+.dept-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.dept-item.active .dept-dot {
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent-glow);
+}
+
+.dept-name {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.dept-item.active .dept-name {
+    color: var(--text-primary);
+}
+
+/* Badges */
+.badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: var(--radius-full);
+    min-width: 20px;
+    text-align: center;
+}
+
+.badge-primary {
+    background: var(--accent);
+    color: #fff;
+}
+
+.badge-secondary {
+    background: var(--bg-hover);
+    color: var(--text-secondary);
+}
+
+.badge-sm {
+    font-size: 10px;
+    padding: 1px 6px;
+}
+
+/* DM list */
+.dm-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.dm-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background .18s;
+    position: relative;
+}
+
+.dm-item:hover {
+    background: var(--bg-hover);
+}
+
+.dm-item.active {
+    background: var(--bg-active);
+}
+
+.dm-avatar {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.dm-avatar img {
+    width: 36px;
+    height: 36px;
+}
+
+.dm-avatar.online::after,
+.chat-avatar.online::after {
+    content: '';
+    position: absolute;
+    bottom: 1px;
+    right: 1px;
+    width: 9px;
+    height: 9px;
+    background: var(--green);
+    border: 2px solid var(--bg-surface);
+    border-radius: 50%;
+}
+
+.dm-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.dm-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dm-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.dm-time {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.dm-preview {
+    display: block;
+    font-size: 12px;
+    color: var(--text-secondary);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

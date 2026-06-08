@@ -1,0 +1,146 @@
+<main class="task-detail-page">
+  @if (loading()) {
+    <section class="state-card">Loading task...</section>
+  } @else if (error() && !task()) {
+    <section class="state-card state-card--error">
+      <h1>Task unavailable</h1>
+      <p>{{ error() }}</p>
+      <a routerLink="/dashboard/tasks">Back to tasks</a>
+    </section>
+  } @else {
+    @if (task(); as currentTask) {
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a routerLink="/dashboard/tasks">Tasks</a>
+        <span>&gt;</span>
+        <strong>{{ currentTask.title }}</strong>
+      </nav>
+
+      <header class="detail-header">
+        <div>
+          <h1>{{ currentTask.title }}</h1>
+          <div class="task-meta-line">
+            <span class="status-pill" [class.completed]="currentTask.status === 'COMPLETED'">
+              {{ currentTask.status === 'ACTIVE' ? 'Active' : 'Completed' }}
+            </span>
+            <span class="meta-dot"></span>
+            <span>Assigned to: <strong>{{ assigneeName(currentTask) }}</strong></span>
+            <span class="meta-dot"></span>
+            <span>Due to: <strong>{{ formatDueDate(currentTask.dueDate) }}</strong></span>
+          </div>
+        </div>
+
+        <div class="detail-actions">
+          @if (canCompleteTask(currentTask)) {
+            @if (currentTask.status === 'ACTIVE') {
+              <button
+                type="button"
+                class="complete-task-btn"
+                [disabled]="completingTask()"
+                (click)="completeTask()"
+              >
+                {{ completingTask() ? 'Submitting...' : 'Submit as Completed' }}
+              </button>
+            } @else {
+              <span class="completed-banner">Task completed</span>
+            }
+          }
+
+          @if (isAdmin()) {
+            <button type="button" class="delete-task-btn" (click)="deleteTask()">Delete Task</button>
+          }
+        </div>
+      </header>
+
+      @if (error()) {
+        <p class="task-error">{{ error() }}</p>
+      }
+
+      <section class="detail-layout">
+        <div class="detail-main">
+          <section class="content-section">
+            <div class="section-title">
+              <span class="section-icon">D</span>
+              <h2>Description</h2>
+            </div>
+            <article class="description-card">
+              @if (currentTask.description) {
+                <p>{{ currentTask.description }}</p>
+              } @else {
+                <p class="muted">No description added yet.</p>
+              }
+            </article>
+          </section>
+
+          <section class="content-section">
+            <div class="section-title section-title--split">
+              <div>
+                <span class="section-icon">S</span>
+                <h2>Subtasks</h2>
+              </div>
+              <span>{{ completedSubtasks() }}/{{ currentTask.subtasks.length }} complete</span>
+            </div>
+
+            <div class="subtask-list">
+              @if (currentTask.subtasks.length === 0) {
+                <p class="empty-subtasks">No subtasks yet. Add the first one below.</p>
+              } @else {
+                @for (subtask of currentTask.subtasks; track subtask.id) {
+                  <div class="subtask-row">
+                    <button
+                      type="button"
+                      class="subtask-checkbox"
+                      [class.checked]="subtask.completed"
+                      [disabled]="subtask.completed || !canCompleteTask(currentTask)"
+                      (click)="completeSubtask(subtask.id)"
+                      aria-label="Complete subtask"
+                    ></button>
+                    <span [class.done]="subtask.completed">{{ subtask.title }}</span>
+                  </div>
+                }
+              }
+            </div>
+
+            @if (isAdmin() && canCompleteTask(currentTask)) {
+              <div class="add-subtask">
+                <input
+                  type="text"
+                  placeholder="Add a new subtask"
+                  [value]="newSubtaskTitle()"
+                  (input)="updateNewSubtaskTitle($any($event.target).value)"
+                  (keydown.enter)="addSubtask(); $event.preventDefault()"
+                />
+                <button type="button" [disabled]="savingSubtask()" (click)="addSubtask()">
+                  {{ savingSubtask() ? 'Adding...' : 'Add Item' }}
+                </button>
+              </div>
+            }
+          </section>
+        </div>
+
+        <aside class="metadata-card">
+          <h2>Task Metadata</h2>
+          <div class="metadata-row">
+            <span>Status</span>
+            <strong>{{ currentTask.status === 'ACTIVE' ? 'Active' : 'Completed' }}</strong>
+          </div>
+          <div class="metadata-row">
+            <span>Department</span>
+            <strong>{{ departmentLabel(currentTask.department) }}</strong>
+          </div>
+          <div class="metadata-row">
+            <span>Assigned to</span>
+            <strong>{{ assigneeName(currentTask) }}</strong>
+          </div>
+          <div class="metadata-row">
+            <span>Due to</span>
+            <strong>{{ formatDueDate(currentTask.dueDate) }}</strong>
+          </div>
+          <div class="metadata-row">
+            <span>Subtasks</span>
+            <strong>{{ currentTask.subtasks.length }}</strong>
+          </div>
+        </aside>
+      </section>
+    }
+  }
+</main>

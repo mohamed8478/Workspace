@@ -1,0 +1,91 @@
+<main class="settings-page">
+  <header class="settings-header">
+    <div>
+      <span class="settings-kicker">Workspace settings</span>
+      <h1>Account settings</h1>
+      <p>View your profile details and manage your current workspace session.</p>
+    </div>
+  </header>
+  <section class="profile-hero">
+    <div class="profile-avatar">{{ initials() }}</div>
+    <div class="profile-copy">
+      <span class="profile-label">Signed in as</span>
+      <h2>{{ displayName() }}</h2>
+      <p>{{ email() }}</p>
+      <div class="role-list">
+        @for (role of roles(); track role) {
+          <span class="role-pill">{{ role }}</span>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="settings-grid">
+    <article class="settings-card">
+      <span class="card-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 21a8 8 0 0 0-16 0M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" />
+        </svg>
+      </span>
+      <div>
+        <span class="card-label">Name</span>
+        <strong>{{ displayName() }}</strong>
+        <!-- <p>Your visible name across meetings, chats, and tasks.</p> -->
+      </div>
+    </article>
+
+    <article class="settings-card">
+      <span class="card-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6h16v12H4V6Zm0 1 8 6 8-6" />
+        </svg>
+      </span>
+      <div>
+        <span class="card-label">Email</span>
+        <strong>{{ email() }}</strong>
+        <!-- <p>This is the account used to sign in to the workspace.</p> -->
+      </div>
+    </article>
+
+    <!-- <article class="settings-card">
+      <span class="card-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z" />
+          <path d="m9 12 2 2 4-5" />
+        </svg>
+      </span>
+      <div>
+        <span class="card-label">Role access</span>
+        <strong>{{ roles().join(', ') }}</strong>
+        <p>Your role controls what actions you can perform in the app.</p>
+      </div>
+    </article>
+
+    <article class="settings-card">
+      <span class="card-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h10" />
+        </svg>
+      </span>
+      <div>
+        <span class="card-label">User ID</span>
+        <strong>{{ userId() }}</strong>
+        <p>Internal identifier used by the workspace backend.</p>
+      </div>
+    </article> -->
+  </section>
+
+  <section class="logout-card">
+    <div>
+      <span class="logout-kicker">Session</span>
+      <h2>Leave this workspace safely</h2>
+      <p>Logging out clears your local session and returns you to the login page.</p>
+    </div>
+    <button type="button" class="logout-button" (click)="logout()">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M10 17 15 12 10 7M15 12H3M21 3v18h-8" />
+      </svg>
+      Logout
+    </button>
+  </section>
+</main>

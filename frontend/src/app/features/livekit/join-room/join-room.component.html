@@ -1,0 +1,56 @@
+<div class="join-room-container">
+  <div class="join-room-card">
+    <div class="join-room-logo">
+      <span class="join-room-icon">◈</span>
+      <h1>LiveRoom</h1>
+    </div>
+
+    <p class="join-room-subtitle">Join your video meeting</p>
+
+    <form [formGroup]="form" (ngSubmit)="join()" class="join-room-form" novalidate>
+      <div class="join-room-field">
+        <label for="roomName">Room Name</label>
+        <input
+          id="roomName"
+          formControlName="roomName"
+          type="text"
+          placeholder="e.g. team-standup"
+          [disabled]="loading()"
+        />
+        @if (getFieldError('roomName'); as error) {
+          <span class="join-room-error">{{ error }}</span>
+        }
+      </div>
+
+      <div class="join-room-field">
+        <label for="participantName">Your Name</label>
+        <input
+          id="participantName"
+          formControlName="participantName"
+          type="text"
+          placeholder="e.g. Mohamed"
+          [disabled]="loading()"
+        />
+        @if (getFieldError('participantName'); as error) {
+          <span class="join-room-error">{{ error }}</span>
+        }
+      </div>
+
+      @if (error()) {
+        <div class="join-room-error-msg">{{ error() }}</div>
+      }
+
+      <button
+        type="submit"
+        class="join-room-btn"
+        [disabled]="loading()"
+      >
+        @if (loading()) {
+          <span class="join-room-spinner"></span> Connecting…
+        } @else {
+          Join Room →
+        }
+      </button>
+    </form>
+  </div>
+</div>

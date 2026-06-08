@@ -1,0 +1,6 @@
+/* Make the host element transparent to CSS grid.
+   Without this, <app-chat-page> is a single grid cell
+   that swallows the sidebar + message area columns. */
+:host {
+  display: contents;
+}

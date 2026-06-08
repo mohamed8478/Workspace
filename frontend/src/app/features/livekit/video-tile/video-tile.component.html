@@ -1,0 +1,24 @@
+<div class="video-tile" [class.video-tile--speaking]="isSpeaking">
+  <video
+    #videoEl
+    class="video-tile__video"
+    autoplay
+    playsinline
+    [muted]="isLocal"
+  ></video>
+
+  <div class="video-tile__info">
+    <span class="video-tile__name">
+      {{ participant.name || participant.identity }}
+    </span>
+    @if (isLocal) {
+      <span class="video-tile__badge">You</span>
+    }
+  </div>
+
+  @if (!cameraEnabled) {
+    <div class="video-tile__camera-off">
+      <span>{{ getInitials() }}</span>
+    </div>
+  }
+</div>

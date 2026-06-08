@@ -1,0 +1,119 @@
+<main class="main">
+  <div class="page-header">
+    <h1 class="page-title">Meetings</h1>
+    <button routerLink="/dashboard/create" class="btn-create">
+      <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 640 640">
+        <path fill="rgb(255, 255, 255)" d="M352 128C352 110.3 337.7 96 320 96C302.3 96 288 110.3 288 128L288 288L128 288C110.3 288 96 302.3 96 320C96 337.7 110.3 352 128 352L288 352L288 512C288 529.7 302.3 544 320 544C337.7 544 352 529.7 352 512L352 352L512 352C529.7 352 544 337.7 544 320C544 302.3 529.7 288 512 288L352 288L352 128z" />
+      </svg>
+      Create Meeting
+    </button>
+  </div>
+
+  <div class="sec-label">
+    <span class="sec-text">Live Now</span>
+    <span class="live-badge"><span class="pulse"></span> {{ activeMeetingsCount() }} Active</span>
+  </div>
+
+  <div class="live-grid">
+    @for (meeting of activeMeetings(); track meeting.id) {
+      <div class="live-card">
+        <div class="lc-top">
+          <div class="lc-live">
+            <span class="lc-dot"></span><span class="lc-tag">LIVE</span>
+          </div>
+          <span class="lc-time"><i class="ti ti-clock"></i> Started {{ getMinutesUntilMeeting(meeting) }} mins ago</span>
+        </div>
+        <div class="lc-title">{{ meeting.title }}</div>
+        <div class="lc-members">
+          <i class="ti ti-users"></i> {{ activeCountFor(meeting.id) }} team members active
+        </div>
+        <div class="lc-foot">
+          <div class="avatars">
+            @for (name of activeNamesFor(meeting.id).slice(0, 4); track name) {
+              <div class="av av-c">{{ getInitials(name) }}</div>
+            }
+            @if (activeCountFor(meeting.id) > 4) {
+              <div class="av av-c">+{{ activeCountFor(meeting.id) - 4 }}</div>
+            }
+          </div>
+          <button class="btn-join" (click)="joinMeeting(meeting)">Join Now</button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <section class="scheduled-section">
+    <div class="scheduled-head">
+      <div>
+        <span class="section-kicker">Scheduled meetings</span>
+        <h2>Upcoming meetings</h2>
+      </div>
+      <span class="scheduled-count">{{ upcomingMeetings().length }} upcoming</span>
+    </div>
+
+    @if (upcomingMeetings().length >= 1) {
+      <div class="mlist">
+        @for (meeting of upcomingMeetings(); track meeting.id) {
+          <div class="mrow">
+            <div class="date-blk">
+              <div class="d-mon">{{ meeting.startTime ? formatDate(meeting.startTime).monthLabel : '' }}</div>
+              <div class="d-num">{{ meeting.startTime ? formatDate(meeting.startTime).dayLabel : '' }}</div>
+            </div>
+            <div class="divv"></div>
+            <div class="minfo">
+              <div class="mname">{{ meeting.title }}</div>
+              <div class="mmeta">
+                <svg xmlns="http://www.w3.org/2000/svg" height="14" width="14" viewBox="0 0 640 640">
+                  <path fill="rgb(160, 160, 160)" d="M528 320C528 434.9 434.9 528 320 528C205.1 528 112 434.9 112 320C112 205.1 205.1 112 320 112C434.9 112 528 205.1 528 320zM64 320C64 461.4 178.6 576 320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320zM296 184L296 320C296 328 300 335.5 306.7 340L402.7 404C413.7 411.4 428.6 408.4 436 397.3C443.4 386.2 440.4 371.4 429.3 364L344 307.2L344 184C344 170.7 333.3 160 320 160C306.7 160 296 170.7 296 184z" />
+                </svg>
+                {{ meeting.startTime ? formatTime(meeting.startTime) : '' }}
+                @if (meeting.participants.length > 0) {
+                  <svg xmlns="http://www.w3.org/2000/svg" height="14" width="14" viewBox="0 0 640 640">
+                    <path fill="rgb(160, 160, 160)" d="M320 80C377.4 80 424 126.6 424 184C424 241.4 377.4 288 320 288C262.6 288 216 241.4 216 184C216 126.6 262.6 80 320 80zM96 152C135.8 152 168 184.2 168 224C168 263.8 135.8 296 96 296C56.2 296 24 263.8 24 224C24 184.2 56.2 152 96 152zM0 480C0 409.3 57.3 352 128 352C140.8 352 153.2 353.9 164.9 357.4C132 394.2 112 442.8 112 496L112 512C112 523.4 114.4 534.2 118.7 544L32 544C14.3 544 0 529.7 0 512L0 480zM521.3 544C525.6 534.2 528 523.4 528 512L528 496C528 442.8 508 394.2 475.1 357.4C486.8 353.9 499.2 352 512 352C582.7 352 640 409.3 640 480L640 512C640 529.7 625.7 544 608 544L521.3 544zM472 224C472 184.2 504.2 152 544 152C583.8 152 616 184.2 616 224C616 263.8 583.8 296 544 296C504.2 296 472 263.8 472 224zM160 496C160 407.6 231.6 336 320 336C408.4 336 480 407.6 480 496L480 512C480 529.7 465.7 544 448 544L192 544C174.3 544 160 529.7 160 512L160 496z" />
+                  </svg>
+                  {{ meeting.participants.length }} Attendees
+                }
+              </div>
+            </div>
+            <div class="mright">
+              @if (meeting.participants.length > 0) {
+                <div class="avatars">
+                  @for (participant of meeting.participants.slice(0, 3); track participant.id) {
+                    <div class="av av-c">{{ participant.name ? getFirstLetter(participant.name) : '' }}</div>
+                  }
+                  @if (meeting.participants.length > 3) {
+                    <div class="av av-c" style="font-size: 8.5px">+{{ meeting.participants.length - 3 }}</div>
+                  }
+                </div>
+              }
+              <div class="mact">
+                <button
+                  class="act-btn"
+                  type="button"
+                  aria-label="Copy meeting link"
+                  (click)="copyMeetingLink(meeting)"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" height="14" width="14" viewBox="0 0 640 640">
+                    <path fill="rgb(140, 140, 141)" d="M451.5 160C434.9 160 418.8 164.5 404.7 172.7C388.9 156.7 370.5 143.3 350.2 133.2C378.4 109.2 414.3 96 451.5 96C537.9 96 608 166 608 252.5C608 294 591.5 333.8 562.2 363.1L491.1 434.2C461.8 463.5 422 480 380.5 480C294.1 480 224 410 224 323.5C224 322 224 320.5 224.1 319C224.6 301.3 239.3 287.4 257 287.9C274.7 288.4 288.6 303.1 288.1 320.8C288.1 321.7 288.1 322.6 288.1 323.4C288.1 374.5 329.5 415.9 380.6 415.9C405.1 415.9 428.6 406.2 446 388.8L517.1 317.7C534.4 300.4 544.2 276.8 544.2 252.3C544.2 201.2 502.8 159.8 451.7 159.8zM307.2 237.3C305.3 236.5 303.4 235.4 301.7 234.2C289.1 227.7 274.7 224 259.6 224C235.1 224 211.6 233.7 194.2 251.1L123.1 322.2C105.8 339.5 96 363.1 96 387.6C96 438.7 137.4 480.1 188.5 480.1C205 480.1 221.1 475.7 235.2 467.5C251 483.5 269.4 496.9 289.8 507C261.6 530.9 225.8 544.2 188.5 544.2C102.1 544.2 32 474.2 32 387.7C32 346.2 48.5 306.4 77.8 277.1L148.9 206C178.2 176.7 218 160.2 259.5 160.2C346.1 160.2 416 230.8 416 317.1C416 318.4 416 319.7 416 321C415.6 338.7 400.9 352.6 383.2 352.2C365.5 351.8 351.6 337.1 352 319.4C352 318.6 352 317.9 352 317.1C352 283.4 334 253.8 307.2 237.5z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-upcoming">
+        <div class="empty-orbit">
+          <div class="empty-icon">
+            <i class="ti ti-calendar-time"></i>
+          </div>
+        </div>
+        <span class="empty-kicker">All clear</span>
+        <h3>No upcoming meetings</h3>
+        <p>Your schedule is open right now. Create a meeting when you are ready to bring the team together.</p>
+        <button routerLink="/dashboard/create" class="empty-action">Schedule a meeting</button>
+      </div>
+    }
+  </section>
+</main>

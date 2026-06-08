@@ -1,0 +1,36 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  background: var(--color-primary, #2563eb);
+  color: white;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn--secondary {
+  background: var(--color-danger, #dc2626);
+}
+
+.error {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.transcript {
+  background: #f3f4f6;
+  padding: 1rem;
+  border-radius: 6px;
+}

@@ -1,0 +1,89 @@
+<aside class="sidebar">
+    <!-- Search -->
+    <div class="sidebar-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input
+        type="text"
+        placeholder="Search conversations..."
+        id="search-input"
+        [value]="searchTerm()"
+        (input)="onSearchChange($event)"
+      />
+    </div>
+
+    <!-- Group Chats (static) -->
+    <section class="sidebar-section">
+      <h3 class="section-label">GROUP CHATS</h3>
+      <ul class="dept-list">
+        @for (group of groupChats(); track group.id) {
+          <li class="dept-item">
+            <span class="dept-dot"></span>
+            <span class="dept-name">{{ group.name }}</span>
+            @if (group.unreadCount && group.unreadCount > 0) {
+              <span class="badge badge-primary">{{ group.unreadCount }}</span>
+            }
+          </li>
+        }
+      </ul>
+    </section>
+
+    <!-- Direct Messages -->
+    <section class="sidebar-section">
+      <h3 class="section-label">DIRECT MESSAGES</h3>
+      @if (loadingChats()) {
+        <div class="sidebar-empty">Loading conversations...</div>
+      } @else if (directChats().length === 0) {
+        <div class="sidebar-empty">No direct messages yet</div>
+      }
+      <ul class="dm-list">
+        @for (chat of directChats(); track chat.id) {
+          <li
+            class="dm-item"
+            [class.active]="chat.id === selectedChatId()"
+            (click)="selectChat(chat)"
+          >
+            <div class="dm-avatar">
+              <img [src]="getAvatarUrl(chat.id)" [alt]="chat.name" />
+            </div>
+            <div class="dm-info">
+              <div class="dm-header">
+                <span class="dm-name">{{ chat.name }}</span>
+                <span class="dm-time">{{ formatPreviewTime(chat.lastMessageDate) }}</span>
+              </div>
+              <span class="dm-preview">{{ getPreviewText(chat) }}</span>
+            </div>
+            @if (chat.unreadCount && chat.unreadCount > 0) {
+              <span class="badge badge-primary badge-sm">{{ chat.unreadCount }}</span>
+            }
+          </li>
+        }
+      </ul>
+
+      @if (showContacts()) {
+        <p class="section-label contacts">CONTACTS</p>
+        @if (loadingContacts()) {
+          <div class="sidebar-empty">Searching contacts...</div>
+        } @else if (contactResults().length === 0) {
+          <div class="sidebar-empty">No contacts found</div>
+        }
+        <ul class="dm-list">
+          @for (contact of contactResults(); track contact.id) {
+            <li
+              class="dm-item"
+              [class.active]="selectedContact()?.id === contact.id && !selectedChatId()"
+              (click)="selectContact(contact)"
+            >
+              <div class="dm-avatar">
+                <img [src]="getAvatarUrl(contact.id)" [alt]="getContactDisplayName(contact)" />
+              </div>
+              <div class="dm-info">
+                <div class="dm-header">
+                  <span class="dm-name">{{ getContactDisplayName(contact) }}</span>
+                </div>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  </aside>

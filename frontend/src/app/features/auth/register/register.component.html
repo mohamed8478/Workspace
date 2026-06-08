@@ -1,0 +1,282 @@
+<div class="auth-page">
+  <!-- Left decorative panel -->
+  <div class="auth-panel-left">
+    <div class="panel-content">
+      <!-- Brand -->
+      <div class="panel-brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
+        </div>
+        <div>
+          <p class="panel-brand-name">Cognitive Workspace</p>
+          <p class="panel-brand-sub">ENTERPRISE HUB</p>
+        </div>
+      </div>
+
+      <!-- Hero -->
+      <div class="panel-hero">
+        <h1 class="panel-headline">Join your team's<br />intelligence<br /><span class="gradient-text">workspace.</span></h1>
+        <p class="panel-sub">Collaborate seamlessly with AI-powered insights, real-time messaging, and unified task management.</p>
+      </div>
+
+      <!-- Feature pills -->
+      <div class="feature-pills">
+        <div class="pill">
+          <div class="pill-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" />
+            </svg>
+          </div>
+          <span>AI-Powered Summaries</span>
+        </div>
+        <div class="pill">
+          <div class="pill-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+          </div>
+          <span>Real-Time Messaging</span>
+        </div>
+        <div class="pill">
+          <div class="pill-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 11 12 14 22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg>
+          </div>
+          <span>Smart Task Tracking</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Background orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Right form panel -->
+  <div class="auth-panel-right">
+    <div class="auth-card auth-card--register">
+      <!-- Card header -->
+      <div class="auth-card-header">
+        <h2 class="auth-title">Create account</h2>
+        <p class="auth-subtitle">Join Cognitive Workspace today</p>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form" novalidate>
+        <!-- First Name Field -->
+        <div class="form-group">
+          <label class="form-label" for="first-name">First Name</label>
+          <input 
+            type="text" 
+            id="first-name" 
+            formControlName="firstName" 
+            class="form-input"
+            [class.is-invalid]="isFieldInvalid('firstName')"
+            placeholder="John"
+          />
+          @if (isFieldInvalid('firstName')) {
+            <span class="field-error">First name is required</span>
+          }
+        </div>
+
+        <!-- Last Name Field -->
+        <div class="form-group">
+          <label class="form-label" for="last-name">Last Name</label>
+          <input 
+            type="text" 
+            id="last-name" 
+            formControlName="lastName" 
+            class="form-input"
+            [class.is-invalid]="isFieldInvalid('lastName')"
+            placeholder="Doe"
+          />
+          @if (isFieldInvalid('lastName')) {
+            <span class="field-error">Last name is required</span>
+          }
+        </div>
+
+        <!-- Email Field -->
+        <div class="form-group">
+          <label class="form-label" for="email">Work Email</label>
+          <div class="input-wrap">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
+            </span>
+            <input 
+              type="email" 
+              id="email" 
+              formControlName="email" 
+              class="form-input"
+              [class.is-invalid]="isFieldInvalid('email')"
+              placeholder="john@company.com"
+              autocomplete="email"
+            />
+          </div>
+          @if (isFieldInvalid('email')) {
+            <span class="field-error">
+              @if (form.get('email')?.hasError('required')) {
+                Email is required
+              }
+              @if (form.get('email')?.hasError('email')) {
+                Please enter a valid email
+              }
+            </span>
+          }
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div class="input-wrap">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+            </span>
+            <input 
+              [type]="showPassword() ? 'text' : 'password'" 
+              id="password" 
+              formControlName="password" 
+              class="form-input"
+              [class.is-invalid]="isFieldInvalid('password')"
+              placeholder="••••••••••"
+              autocomplete="new-password"
+            />
+            <button 
+              type="button" 
+              class="toggle-pw" 
+              (click)="togglePasswordVisibility()"
+              title="Show/hide password"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                @if (showPassword()) {
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19M1 1l22 22" />
+                } @else {
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                }
+              </svg>
+            </button>
+          </div>
+          @if (isFieldInvalid('password')) {
+            <span class="field-error">
+              @if (form.get('password')?.hasError('required')) {
+                Password is required
+              }
+              @if (form.get('password')?.hasError('minLength')) {
+                At least 8 characters
+              }
+              @if (form.get('password')?.hasError('noUppercase')) {
+                At least one uppercase letter
+              }
+              @if (form.get('password')?.hasError('noLowercase')) {
+                At least one lowercase letter
+              }
+              @if (form.get('password')?.hasError('noNumber')) {
+                At least one number
+              }
+              @if (form.get('password')?.hasError('noSpecialChar')) {
+                At least one special character
+              }
+            </span>
+          }
+
+          <!-- Password strength bar -->
+          @if (form.get('password')?.value) {
+            <div class="strength-bar">
+              <div class="strength-seg" [class.weak]="passwordStrength() >= 1" [class.fair]="passwordStrength() >= 2" [class.good]="passwordStrength() >= 3" [class.strong]="passwordStrength() >= 4"></div>
+              <div class="strength-seg" [class.weak]="passwordStrength() >= 2" [class.fair]="passwordStrength() >= 2" [class.good]="passwordStrength() >= 3" [class.strong]="passwordStrength() >= 4"></div>
+              <div class="strength-seg" [class.weak]="passwordStrength() >= 3" [class.fair]="passwordStrength() >= 3" [class.good]="passwordStrength() >= 3" [class.strong]="passwordStrength() >= 4"></div>
+              <div class="strength-seg" [class.weak]="passwordStrength() >= 4" [class.fair]="passwordStrength() >= 4" [class.good]="passwordStrength() >= 4" [class.strong]="passwordStrength() >= 4"></div>
+            </div>
+            @if (getPasswordStrengthLabel()) {
+              <span class="strength-label" [style.color]="getPasswordStrengthColor()">
+                {{ getPasswordStrengthLabel() }} password
+              </span>
+            }
+          }
+        </div>
+
+        <!-- Confirm Password Field -->
+        <div class="form-group">
+          <label class="form-label" for="confirm-password">Confirm Password</label>
+          <div class="input-wrap">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+            </span>
+            <input 
+              type="password" 
+              id="confirm-password" 
+              formControlName="confirmPassword" 
+              class="form-input"
+              [class.is-invalid]="isFieldInvalid('confirmPassword')"
+              placeholder="••••••••••"
+              autocomplete="new-password"
+            />
+          </div>
+          @if (isFieldInvalid('confirmPassword')) {
+            <span class="field-error">
+              @if (form.get('confirmPassword')?.hasError('required')) {
+                Please confirm your password
+              }
+              @if (form.get('confirmPassword')?.hasError('passwordMismatch')) {
+                Passwords do not match
+              }
+            </span>
+          }
+        </div>
+
+        <!-- Terms checkbox -->
+        <div class="form-row-check">
+          <label class="check-label" for="agree-terms">
+            <input 
+              type="checkbox" 
+              id="agree-terms" 
+              formControlName="agreeTerms"
+            />
+            <span class="check-box"></span>
+            I agree to the Terms of Service
+          </label>
+          @if (form.get('agreeTerms')?.invalid && form.get('agreeTerms')?.touched) {
+            <span class="field-error">You must agree to continue</span>
+          }
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit" 
+          class="btn-primary" 
+          [disabled]="form.invalid || isLoading()"
+        >
+          <span class="btn-text">{{ isLoading() ? 'Creating account…' : 'Create Account' }}</span>
+          <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </button>
+      </form>
+
+      <!-- Footer -->
+      <p class="auth-footer">
+        Already have an account?
+        <a routerLink="/auth/login" class="auth-link">Sign in</a>
+      </p>
+    </div>
+  </div>
+</div>

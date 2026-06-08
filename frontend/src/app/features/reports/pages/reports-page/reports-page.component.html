@@ -1,0 +1,238 @@
+<main class="reports-page">
+  <header class="reports-hero">
+    <div>
+      <span class="reports-kicker">Reports</span>
+      <h1>Report Center</h1>
+      <p>Select a generated Excel report and turn it into product, client, and operations insights.</p>
+    </div>
+    <div class="hero-actions">
+      <!-- <span class="health-pill" [class.health-pill--online]="health() === 'online'" [class.health-pill--offline]="health() === 'offline'">
+        <span></span>
+        <!-- {{ health() === 'checking' ? 'Checking API' : health() === 'online' ? 'Spring proxy ready' : 'Report API offline' }} 
+      </span> -->
+      <button type="button" class="refresh-btn" (click)="refresh()">Refresh</button>
+    </div>
+  </header>
+
+  <section class="report-picker" aria-label="Select report">
+    @for (report of quickReports; track report.type) {
+      <button
+        type="button"
+        class="picker-card"
+        [class.picker-card--active]="selectedReport() === report.type"
+        [class.picker-card--green]="report.accent === 'green'"
+        (click)="selectReport(report.type)"
+      >
+        <span>{{ report.eyebrow }}</span>
+        <strong>{{ report.title }}</strong>
+        <small>{{ report.description }}</small>
+      </button>
+    }
+  </section>
+
+  <section class="metric-grid" aria-label="Report overview">
+    <article class="metric-card">
+      <span class="metric-icon metric-icon--blue">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><path d="M14 3v6h6M8 14h8M8 17h5"/></svg>
+      </span>
+      <p>Rows analyzed</p>
+      <strong>{{ totalRows() }}</strong>
+      <small>{{ selectedQuickReport().title }}</small>
+    </article>
+    <article class="metric-card">
+      <span class="metric-icon metric-icon--green">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"/></svg>
+      </span>
+      <p>Clients</p>
+      <strong>{{ totalClients() }}</strong>
+      <small>Unique client names</small>
+    </article>
+    <article class="metric-card">
+      <span class="metric-icon metric-icon--amber">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8l9 5 9-5Z"/><path d="m3 8 9 5 9-5v8l-9 5-9-5V8Z"/></svg>
+      </span>
+      <p>Products</p>
+      <strong>{{ totalProducts() }}</strong>
+      <small>{{ selectedReport() === 'client' ? 'Product families sold' : 'Products with average timing' }}</small>
+    </article>
+    <article class="metric-card">
+      <span class="metric-icon metric-icon--rose">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 16h13l4-5h-5l-2-4H6l-3 9Z"/><path d="M7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM17 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg>
+      </span>
+      <p>{{ selectedReport() === 'camion' ? 'Trucks' : 'Total quantity' }}</p>
+      <strong>{{ selectedReport() === 'camion' ? totalTrucks() : formatNumber(totalQuantity()) }}</strong>
+      <small>{{ selectedReport() === 'camion' ? 'Unique immatriculations' : 'QTE from summary rows' }}</small>
+    </article>
+  </section>
+
+  <section class="reports-showcase">
+    <article class="insight-card">
+      <div class="insight-top">
+        <div>
+          <span class="reports-kicker">Graph</span>
+          <h2>{{ analytics()?.title || selectedQuickReport().title }}</h2>
+        </div>
+        <button type="button" class="export-pill" (click)="download(selectedReport())">
+          {{ downloading() === selectedReport() ? 'Preparing...' : 'Download Excel' }}
+        </button>
+      </div>
+
+      @if (analyticsLoading()) {
+        <div class="empty-state empty-state--compact">
+          <span class="loader"></span>
+          <strong>Reading Excel report</strong>
+          <p>{{ selectedReport() === 'client' ? 'Calculating total quantity by product.' : 'Calculating average ATTENT and Temps de Chargement by product.' }}</p>
+        </div>
+      } @else if (productBreakdown().length > 0) {
+        <div class="report-progress-card">
+          <div class="progress-card-head">
+            <div>
+              <span class="progress-eyebrow">
+                {{ selectedReport() === 'client' ? 'Product quantity' : 'Product timing' }}
+              </span>
+              <strong>
+                {{ selectedReport() === 'client' ? 'QTE by product' : 'Average timing by product' }}
+              </strong>
+            </div>
+            <span class="progress-summary">
+              {{ selectedReport() === 'client' ? 'Sorted from the selected Excel report' : 'ATTENT and loading time in minutes' }}
+            </span>
+          </div>
+
+          <div class="progress-list">
+            @for (product of productBreakdown(); track product.name) {
+              <article class="progress-row">
+                <div class="progress-row-main">
+                  <div>
+                    <strong>{{ product.name }}</strong>
+                    <span>
+                      {{ selectedReport() === 'client' ? 'Quantite totale' : product.salesCount + ' voyages analyzed' }}
+                    </span>
+                  </div>
+
+                  @if (selectedReport() === 'client') {
+                    <mark>{{ formatNumber(product.quantity) }} QTE</mark>
+                  } @else {
+                    <mark>{{ formatMinutes(product.averageWaitingMinutes) }} ATTENT</mark>
+                  }
+                </div>
+
+                @if (selectedReport() === 'client') {
+                  <div class="metric-progress">
+                    <div class="metric-progress-copy">
+                      <span>QTE</span>
+                      <strong>{{ formatNumber(product.quantity) }}</strong>
+                    </div>
+                    <div class="progress-track">
+                      <span class="progress-fill progress-fill--purple" [style.width]="quantityProgressWidth(product)"></span>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="metric-progress metric-progress--stacked">
+                    <div class="metric-progress-copy">
+                      <span>Taux ATTENT</span>
+                      <strong>{{ formatMinutes(product.averageWaitingMinutes) }}</strong>
+                    </div>
+                    <div class="progress-track">
+                      <span class="progress-fill progress-fill--purple" [style.width]="waitingProgressWidth(product)"></span>
+                    </div>
+
+                    <div class="metric-progress-copy">
+                      <span>Temps de chargement</span>
+                      <strong>{{ formatMinutes(product.averageLoadingMinutes) }}</strong>
+                    </div>
+                    <div class="progress-track">
+                      <span class="progress-fill progress-fill--teal" [style.width]="loadingProgressWidth(product)"></span>
+                    </div>
+                  </div>
+                }
+              </article>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="empty-state empty-state--compact">
+          <span class="empty-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><path d="M14 3v6h6M8 14h8M8 17h5"/></svg>
+          </span>
+          <strong>No analytics found</strong>
+          <p>The selected Excel file was loaded, but no product rows were detected.</p>
+        </div>
+      }
+    </article>
+
+    <aside class="quick-downloads">
+      <div class="panel-title">
+        <span class="reports-kicker">Client ranking</span>
+        <h2>Top buyers</h2>
+      </div>
+
+      @if (topClients().length > 0) {
+        @for (client of topClients(); track client.name) {
+          <article class="client-card">
+            <div>
+              <strong>{{ client.name }}</strong>
+              <span>{{ client.salesCount }} sales</span>
+            </div>
+            <mark>{{ formatWeight(client.totalWeight) }}</mark>
+          </article>
+        }
+      } @else {
+        <div class="mini-empty">No client ranking yet.</div>
+      }
+    </aside>
+  </section>
+
+  <section class="reports-table-section">
+    <div class="table-head">
+      <div>
+        <span class="reports-kicker">Archive</span>
+        <h2>Available reports</h2>
+      </div>
+      <label class="report-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"/></svg>
+        <input type="search" placeholder="Search reports..." (input)="onSearch($event)" />
+      </label>
+    </div>
+
+    <div class="reports-table">
+      <div class="table-row table-row--head">
+        <span>Report Name</span>
+        <span>Status</span>
+        <span>Generated</span>
+        <span>Action</span>
+      </div>
+
+      @if (loading()) {
+        <div class="empty-state">
+          <span class="loader"></span>
+          <strong>Loading reports</strong>
+          <p>Checking the Spring report proxy for generated Excel files.</p>
+        </div>
+      } @else if (filteredReports().length > 0) {
+        @for (report of filteredReports(); track report.id) {
+          <div class="table-row">
+            <span class="report-name">{{ report.label || report.name }}</span>
+            <span><mark [class.mark-offline]="report.available === false">{{ report.available === false ? 'Missing file' : formatSize(report.sizeBytes) }}</mark></span>
+            <span>{{ formatDate(report.lastModified) }}</span>
+            <span class="row-actions">
+              @if (report.type === 'client' || report.type === 'camion') {
+                <button type="button" class="table-download table-download--solid" (click)="download(report.type)">Download</button>
+              } @else {
+                <span class="muted-action">Unknown report</span>
+              }
+            </span>
+          </div>
+        }
+      } @else {
+        <div class="empty-state">
+          <span class="empty-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><path d="M14 3v6h6M8 14h8M8 17h5"/></svg>
+          </span>
+          <strong>No reports found</strong>
+          <p>Make sure Flask is running, then refresh this page.</p>
+        </div>
+      }
+    </div>
+  </section>
+</main>

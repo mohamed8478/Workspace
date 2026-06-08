@@ -1,0 +1,6 @@
+livekit-agents
+livekit-plugins-deepgram
+aiohttp
+python-dotenv
+
+python "C:\Users\moham\Desktop\WorkSpace_Prj\agent.py" start

@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: workspace
+  ai:
+    openai:
+      api-key: ${SPRING_AI_OPENAI_API_KEY:}
+      base-url: https://api.groq.com/openai
+      chat:
+        options:
+          model: groq/compound-mini
+  datasource:
+    url: jdbc:mysql://localhost:3306/workspace
+    username: 'root'
+    password:
+  mail:
+    host: ${SPRING_MAIL_HOST:}
+    port: ${SPRING_MAIL_PORT:587}
+    username: ${SPRING_MAIL_USERNAME:}
+    password: ${SPRING_MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH:true}
+          starttls:
+            enable: ${SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE:true}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+      database: mysql
+      database-platform: org.hibernate.dialect.MySQLDialect
+app:
+  jwt:
+    secret: ${APP_JWT_SECRET:replace-with-base64-jwt-secret}
+    expiration: 3600000000 #3 plus 0
+    refresh-expiration: 86400000
+  livekit:
+    api:
+      url: http://localhost:7880
+      key: devkey
+      secret: ${APP_LIVEKIT_API_SECRET:}
+  file:
+    uploads:
+      media-output-path: ./uploads
+  deepgram:
+    apiKey: ${APP_DEEPGRAM_APIKEY:}
+    model: nova-2
+    detectLanguage: true
+  reports:
+    api-url: http://localhost:5000/api
+  mail:
+    from: ${APP_MAIL_FROM:no-reply@workspace.local}
+    reply-to: ${APP_MAIL_REPLY_TO:}
+    report-to: ${APP_MAIL_REPORT_TO:}
+
+kind: Application

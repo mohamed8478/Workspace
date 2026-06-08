@@ -1,0 +1,13 @@
+port: 7880
+bind_addresses:
+  - "0.0.0.0"
+
+keys:
+  devkey: replace-with-livekit-secret
+
+rtc:
+  tcp_port: 7881
+  udp_port: 7882
+  node_ip: "10.0.100.193"
+  use_external_ip: false  
+

@@ -1,0 +1,58 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: stage-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: workspace
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: stage-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/workspace?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_AI_OPENAI_API_KEY: ${SPRING_AI_OPENAI_API_KEY:-}
+      APP_JWT_SECRET: ${APP_JWT_SECRET:-replace-with-base64-jwt-secret}
+      APP_LIVEKIT_API_URL: ${APP_LIVEKIT_API_URL:-http://host.docker.internal:7880}
+      APP_LIVEKIT_API_KEY: ${APP_LIVEKIT_API_KEY:-devkey}
+      APP_LIVEKIT_API_SECRET: ${APP_LIVEKIT_API_SECRET:-}
+      APP_DEEPGRAM_APIKEY: ${APP_DEEPGRAM_APIKEY:-}
+      APP_FILE_UPLOADS_MEDIA_OUTPUT_PATH: /app/uploads
+      APP_REPORTS_API_URL: ${APP_REPORTS_API_URL:-http://host.docker.internal:5000/api}
+    ports:
+      - "8080:8080"
+    volumes:
+      - backend-uploads:/app/uploads
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: stage-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+
+volumes:
+  mysql-data:
+  backend-uploads:

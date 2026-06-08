@@ -1,0 +1,201 @@
+<main class="tasks-page">
+  <header class="tasks-header">
+    <div>
+      <p class="eyebrow">Workspace tasks</p>
+      <h1>Tasks</h1>
+      <span>Plan, track, and hand off work across the team.</span>
+    </div>
+
+    @if (isAdmin()) {
+      <button type="button" class="btn-primary" (click)="showComposer.set(!showComposer())">
+        {{ showComposer() ? 'Close' : 'New Task' }}
+      </button>
+    } 
+  </header>
+
+  @if (showComposer() && isAdmin()) {
+    <section class="task-composer">
+      <div class="composer-grid">
+        <label>
+          Title
+          <input
+            type="text"
+            placeholder="Client onboarding deck"
+            [value]="draftTitle()"
+            (input)="updateDraftTitle($any($event.target).value)"
+          />
+        </label>
+
+        <label>
+          Due to
+          <input
+            type="date"
+            [value]="draftDueDate()"
+            (input)="updateDraftDueDate($any($event.target).value)"
+          />
+        </label>
+
+        <label>
+          Department
+          <select [value]="draftDepartment()" (change)="updateDraftDepartment($any($event.target).value)">
+            @for (department of departments; track department.value) {
+              <option [value]="department.value">{{ department.label }}</option>
+            }
+          </select>
+        </label>
+
+        <div class="assignee-panel">
+          <span class="field-label">Assign to</span>
+          <div class="assignee-search">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <input
+              type="text"
+              placeholder="Search team..."
+              [value]="assigneeQuery()"
+              (input)="updateAssigneeQuery($any($event.target).value)"
+            />
+          </div>
+
+          @if (selectedAssignee(); as assignee) {
+            <div class="selected-assignee-card">
+              <div class="assignee-avatar">{{ (assignee.fullName || 'U').charAt(0) }}</div>
+              <div>
+                <strong>{{ assignee.fullName || 'Unnamed user' }}</strong>
+                <span>Selected assignee</span>
+              </div>
+              <button type="button" (click)="clearAssignee()">Change</button>
+            </div>
+          }
+
+          @if (assigneeResults().length > 0) {
+            <div class="assignee-results-list">
+              @for (user of assigneeResults(); track user.id) {
+                <button type="button" class="assignee-result-row" (click)="selectAssignee(user)">
+                  <span class="assignee-avatar">{{ (user.fullName || 'U').charAt(0) }}</span>
+                  <span>{{ user.fullName || 'Unnamed user' }}</span>
+                  <strong>+</strong>
+                </button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <label class="description-field">
+        Description
+        <textarea
+          rows="4"
+          placeholder="Write the task context, goals, and useful notes..."
+          [value]="draftDescription()"
+          (input)="updateDraftDescription($any($event.target).value)"
+        ></textarea>
+      </label>
+
+      <div class="draft-subtasks">
+        <span>Subtasks</span>
+        <div class="subtask-input">
+          <input
+            type="text"
+            placeholder="Add a subtask"
+            [value]="draftSubtaskTitle()"
+            (input)="updateDraftSubtaskTitle($any($event.target).value)"
+            (keydown.enter)="addDraftSubtask(); $event.preventDefault()"
+          />
+          <button type="button" (click)="addDraftSubtask()">Add</button>
+        </div>
+
+        @if (draftSubtasks().length > 0) {
+          <div class="draft-subtask-list">
+            @for (subtask of draftSubtasks(); track $index) {
+              <button type="button" class="draft-subtask" (click)="removeDraftSubtask($index)">
+                {{ subtask.title }}
+                <span>Remove</span>
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="composer-actions">
+        <button type="button" class="btn-secondary" (click)="showComposer.set(false)">Cancel</button>
+        <button type="button" class="btn-primary" [disabled]="saving()" (click)="createTask()">
+          {{ saving() ? 'Creating...' : 'Create Task' }}
+        </button>
+      </div>
+    </section>
+  }
+
+  @if (error()) {
+    <p class="task-error">{{ error() }}</p>
+  }
+
+  <section class="tasks-table-card">
+    <div class="task-tabs">
+      <button type="button" [class.active]="filter() === 'ACTIVE'" (click)="setFilter('ACTIVE')">
+        Active <span>{{ activeCount() }}</span>
+      </button>
+      <button type="button" [class.active]="filter() === 'COMPLETED'" (click)="setFilter('COMPLETED')">
+        Completed <span>{{ completedCount() }}</span>
+      </button>
+      <button type="button" [class.active]="filter() === 'OVERDUE'" (click)="setFilter('OVERDUE')">
+        Overdue <span>{{ overdueCount() }}</span>
+      </button>
+    </div>
+
+    <div class="task-table">
+      <div class="task-row task-row--head">
+        <span></span>
+        <span>Task</span>
+        <span>Department</span>
+        <span>Assigned to</span>
+        <span>Subtasks</span>
+        <span>Due to</span>
+        <span>Actions</span>
+      </div>
+
+      @if (loading()) {
+        <div class="empty-state">Loading tasks...</div>
+      } @else if (filteredTasks().length === 0) {
+        <div class="empty-state">No tasks in this view yet.</div>
+      } @else {
+        @for (task of filteredTasks(); track task.id) {
+          <a
+            class="task-row task-row--item"
+            [routerLink]="['/dashboard/tasks', task.id]"
+          >
+            <span class="task-check" [class.done]="task.status === 'COMPLETED'"></span>
+            <span class="task-title">
+              <span class="priority-dot" [class.overdue]="isOverdue(task)"></span>
+              {{ task.title }}
+            </span>
+            <span class="department-badge">{{ departmentLabel(task.department) }}</span>
+            <span class="assignee-pill">{{ assigneeName(task) }}</span>
+            <span class="task-muted">{{ subtaskProgress(task) }}</span>
+            <span class="task-muted" [class.overdue-text]="isOverdue(task)">
+              {{ formatDueDate(task.dueDate) }}
+            </span>
+            <span class="row-actions">
+              @if (canCompleteTask(task)) {
+                @if (task.status === 'ACTIVE') {
+                  <button type="button" class="submit-btn" (click)="completeTask(task, $event)">Submit</button>
+                } @else {
+                  <span class="completed-mini">Done</span>
+                }
+              }
+
+              @if (isAdmin()) {
+                <button type="button" class="delete-btn" (click)="deleteTask(task, $event)">Delete</button>
+              }
+            </span>
+          </a>
+        }
+      }
+
+      @if (isAdmin()) {
+        <button type="button" class="add-row" (click)="showComposer.set(true)">Add another task to the list</button>
+      }
+    </div>
+  </section>
+</main>

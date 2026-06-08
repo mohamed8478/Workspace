@@ -1,0 +1,26 @@
+<div class="container">
+  <button
+    class="btn"
+    (click)="startRecording()"
+    [disabled]="isConnecting() || isRecording()">
+    {{ isRecording() ? 'Recording...' : (isConnecting() ? 'Connecting...' : 'Start Recording') }}
+  </button>
+
+  <button
+    class="btn btn--secondary"
+    (click)="stopRecording()"
+    [disabled]="!isRecording()">
+    Stop Recording
+  </button>
+
+  @if (lastError()) {
+    <p class="error">{{ lastError() }}</p>
+  }
+
+  @if (transcript()) {
+    <div class="transcript">
+      <strong>Transcript:</strong>
+      <p>{{ transcript() }}</p>
+    </div>
+  }
+</div>

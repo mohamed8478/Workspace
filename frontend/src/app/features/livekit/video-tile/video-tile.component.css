@@ -1,0 +1,83 @@
+/* Video Tile Component Styles */
+
+:host {
+  display: block;
+}
+
+.video-tile {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #111827;
+  aspect-ratio: 16 / 9;
+  border: 1px solid rgba(224, 226, 240, 0.9);
+  box-shadow: 0 10px 24px rgba(26, 27, 46, 0.08);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    transform 0.2s;
+}
+
+.video-tile--speaking {
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.12);
+}
+
+.video-tile__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.video-tile__info {
+  position: absolute;
+  bottom: 9px;
+  left: 9px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.video-tile__name {
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(17, 24, 39, 0.68);
+  padding: 4px 8px;
+  border-radius: 999px;
+  backdrop-filter: blur(10px);
+}
+
+.video-tile__badge {
+  background: var(--accent-purple);
+  color: #fff;
+  font-size: 10px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  font-weight: 800;
+}
+
+.video-tile__camera-off {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at top left, rgba(108, 99, 255, 0.26), transparent 36%),
+    linear-gradient(135deg, #111827, #1f2937);
+}
+
+.video-tile__camera-off span {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+}
